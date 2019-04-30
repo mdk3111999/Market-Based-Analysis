@@ -1,0 +1,30 @@
+library(arules)
+library(arulesViz)
+groceries <- read.transactions("C:\\Users\\daemk\\Desktop\\gro.csv", sep = ",")
+summary(groceries)
+inspect(groceries[1:5])
+itemFrequency(groceries[, 1:3])
+itemFrequencyPlot(groceries, support = 0.1)
+itemFrequencyPlot(groceries, topN = 20)
+image(groceries[1:5])
+image(sample(groceries, 100))
+library(arules)
+apriori(groceries)
+groceryrules <- apriori(groceries, parameter = list(support =0.006, confidence = 0.25, minlen = 2))
+groceryrules
+summary(groceryrules)
+#groceryrules<-sort(rules, by="confidence", decreasing=TRUE)
+#groceryrules <- apriori(groceries, parameter = list(supp = 0.001, conf = 0.8,maxlen=3))
+inspect(rules[1:5])
+inspect(groceryrules[1:3])
+berryrules <- subset(groceryrules, items %in% "berries")
+inspect(berryrules)
+#write(groceryrules, file = "groceryrules.csv",sep = ",", quote = TRUE, row.names = FALSE)
+#groceryrules_df <- as(groceryrules, "data.frame")
+#str(groceryrules_df)
+#plot(rules,method="graph",interactive=TRUE,shading=NA)
+subset.matrix <- is.subset(rules, rules)
+subset.matrix[lower.tri(subset.matrix, diag=T)] <- NA
+redundant <- colSums(subset.matrix, na.rm=T) >= 1
+rules.pruned <- rules[!redundant]
+rules<-rules.pruned
